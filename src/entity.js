@@ -21,33 +21,23 @@ function setTypeToRegistry(type, registry) {
   return type;
 }
 
-function getRequierFunction(type) {
-  const formats = type.formats;
-  if (!formats || !type.requier) {
-    return require;
-  }
-
-  return type.requier;
-}
-
-export function registerRequier(type, formats, requier) {
+export function registerRequier(type, requier) {
   if (!entityTypes[type]) {
     throw new Error(`${type} not exist in type registry`);
   }
 
-  entityTypes[type].formats = formats;
   entityTypes[type].requier = requier;
 
   return entityTypes[type];
 }
 
-export function registerType(name, dirPath, formats, requirer) {
+export function registerType(name, dirPath, requirer) {
   const registryItem = setTypeToRegistry(
     createTypeMap.apply(this, arguments), entityTypes
   );
 
-  if (formats && requirer) {
-    return registerRequirer(name, formats, requirer);
+  if (requirer) {
+    return registerRequier(name, requirer);
   }
 
   return registryItem;
@@ -60,7 +50,7 @@ export function getType(name) {
 export function get(type, entityPath) {
   const typeOptions = entityTypes[type];
 
-  return getRequierFunction(entityTypes[type], entityPath)(
+  return (entityTypes[type].requier || require)(
     join(typeOptions.dir, entityPath)
   );
 }
