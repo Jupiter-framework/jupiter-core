@@ -38,7 +38,6 @@ describe('Entity', function() {
 
   describe('register', function() {
     const name = 'entity';
-    const formats = ['js', 'coffee', 'node'];
 
     const expectedMap = {
       dir: pathDir,
@@ -46,7 +45,7 @@ describe('Entity', function() {
     };
 
     it('should be return a correct structure', function() {
-      expect(registerType(name, pathDir, formats)).to.be.eql(expectedMap);
+      expect(registerType(name, pathDir)).to.be.eql(expectedMap);
     });
 
     it('should return registred type from registry', function() {
@@ -81,8 +80,6 @@ describe('Entity', function() {
   });
 
   describe('requier', function() {
-    const formats = ['.yml', '.yaml'];
-
     function yamlRequire(path) {
       function readYamlFile() {
         return parse(readFileSync(path, { encoding: 'utf-8' }));
@@ -97,11 +94,10 @@ describe('Entity', function() {
       const expectedAtom = {
         dir: join(__dirname, 'assets/yaml'),
         typeName: 'yaml',
-        formats: formats,
         requier: yamlRequire
       };
 
-      expect(registerRequier('yaml', formats, yamlRequire)).to.be.eql(
+      expect(registerRequier('yaml', yamlRequire)).to.be.eql(
         expectedAtom
       );
     });
