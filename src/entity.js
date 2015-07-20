@@ -4,32 +4,30 @@
  */
 import { join } from 'path';
 
-import { Map as atom } from 'immutable';
-
 let dir;
 
 const entityTypes = {};
 
 function createTypeMap(name, dirPath) {
-  return atom({
+  return {
     dir: dirPath,
     typeName: name,
-  });
+  };
 }
 
 function setTypeToRegistry(type, registry) {
-  registry[type.get('typeName')] = type;
+  registry[type.typeName] = type;
 
   return type;
 }
 
 function getRequierFunction(type) {
-  const formats = type.get('formats');
-  if (!formats || !type.get('requier')) {
+  const formats = type.formats;
+  if (!formats || !type.requier) {
     return require;
   }
 
-  return type.get('requier');
+  return type.requier;
 }
 
 export function registerRequier(type, formats, requier) {
@@ -37,9 +35,8 @@ export function registerRequier(type, formats, requier) {
     throw new Error(`${type} not exist in type registry`);
   }
 
-  entityTypes[type] = entityTypes[type]
-    .set('formats', formats)
-    .set('requier', requier);
+  entityTypes[type].formats = formats;
+  entityTypes[type].requier = requier;
 
   return entityTypes[type];
 }
@@ -64,7 +61,7 @@ export function get(type, entityPath) {
   const typeOptions = entityTypes[type];
 
   return getRequierFunction(entityTypes[type], entityPath)(
-    join(typeOptions.get('dir'), entityPath)
+    join(typeOptions.dir, entityPath)
   );
 }
 

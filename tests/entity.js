@@ -3,9 +3,7 @@ import { join } from 'path';
 import { readFileSync } from 'fs';
 
 import { expect } from 'chai';
-import { Map as atom } from 'immutable';
 import { parse } from 'yamljs';
-// import { partialRight, ifElse, contains, map } from 'ramda';
 
 import {
   registerType, getType, getAs,
@@ -42,10 +40,10 @@ describe('Entity', function() {
     const name = 'entity';
     const formats = ['js', 'coffee', 'node'];
 
-    const expectedMap = atom({
+    const expectedMap = {
       dir: pathDir,
       typeName: name,
-    });
+    };
 
     it('should be return a correct structure', function() {
       expect(registerType(name, pathDir, formats)).to.be.eql(expectedMap);
@@ -96,10 +94,12 @@ describe('Entity', function() {
     registerType('yaml', join(__dirname, 'assets', 'yaml'));
 
     it('should register updated type from registry', function() {
-      const expectedAtom = atom({
-          dir: join(__dirname, 'assets/yaml'),
-          typeName: 'yaml',
-        }).set('formats', formats).set('requier', yamlRequire);
+      const expectedAtom = {
+        dir: join(__dirname, 'assets/yaml'),
+        typeName: 'yaml',
+        formats: formats,
+        requier: yamlRequire
+      };
 
       expect(registerRequier('yaml', formats, yamlRequire)).to.be.eql(
         expectedAtom
