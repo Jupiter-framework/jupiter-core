@@ -1,1 +1,1 @@
-# jupiter
+# jupiter-core
