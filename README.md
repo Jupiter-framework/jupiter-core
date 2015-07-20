@@ -1,5 +1,7 @@
 # jupiter-core
 
+[![Build Status](https://travis-ci.org/Jupiter-framework/jupiter-core.svg?branch=master)](https://travis-ci.org/Jupiter-framework/jupiter-core)
+
 Core of Jupiter framework for maintaining entity types and create bundles of
 components.
 
