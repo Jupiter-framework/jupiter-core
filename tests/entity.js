@@ -1,10 +1,17 @@
 
 import { join } from 'path';
+import { readFileSync } from 'fs';
 
 import { expect } from 'chai';
-import { Map as map } from 'immutable';
+import { Map as atom } from 'immutable';
+import { parse } from 'yamljs';
+// import { partialRight, ifElse, contains, map } from 'ramda';
 
-import { registerType, getType, getAs, get, setDir, getDir } from '../src/entity';
+import {
+  registerType, getType, getAs,
+  get, setDir, getDir,
+  registerRequier
+} from '../src/entity';
 
 describe('Entity', function() {
   const pathDir = join(__dirname, 'assets');
@@ -35,7 +42,7 @@ describe('Entity', function() {
     const name = 'entity';
     const formats = ['js', 'coffee', 'node'];
 
-    const expectedMap = map({
+    const expectedMap = atom({
       dir: pathDir,
       typeName: name,
     });
@@ -72,6 +79,35 @@ describe('Entity', function() {
 
     it('should be return a туыеув moule', function() {
       expect(getEntity('nested/module2')).to.be.eql('nested module2');
+    });
+  });
+
+  describe('requier', function() {
+    const formats = ['.yml', '.yaml'];
+
+    function yamlRequire(path) {
+      function readYamlFile() {
+        return parse(readFileSync(path, { encoding: 'utf-8' }));
+      }
+
+      return readYamlFile(path);
+    }
+
+    registerType('yaml', join(__dirname, 'assets', 'yaml'));
+
+    it('should register updated type from registry', function() {
+      const expectedAtom = atom({
+          dir: join(__dirname, 'assets/yaml'),
+          typeName: 'yaml',
+        }).set('formats', formats).set('requier', yamlRequire);
+
+      expect(registerRequier('yaml', formats, yamlRequire)).to.be.eql(
+        expectedAtom
+      );
+    });
+
+    it('should return correct requirer', function() {
+      expect(get('yaml', 'module.yml')).to.be.eql({ module: 'yaml' });
     });
   });
 });
